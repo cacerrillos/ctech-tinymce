@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <meta charset="utf-8">
+    <title>tinymce demo</title>
+    <script src="../../webcomponentsjs/webcomponents-lite.min.js"></script>
+    
+</head>
+
+<body unresolved>
+    <ctech-tinymce-demo></ctech-tinymce-demo>
+
+<script>
+    window.addEventListener('DOMContentLoaded', function () {
+        document.body.removeAttribute('unresolved');
+    }, false);
+</script>
+</body>
+</html>
+<dom-module id="ctech-tinymce-demo">
+    <link rel="import" href="../ctech-tinymce.html">
+    <template>
+        <style>
+            #container {
+                padding-top: 15%;
+                text-align: center;
+            }
+        </style>
+        <div id="container">
+    <h1><code>Tinymce with polymer</code> in action:</h1>
+    <button on-click="_externalSetContent">Set Content 1</button>
+    <button on-click="_externalSetContentTwo">Set Content 2</button>
+    <ctech-tinymce id="myDecorator"></ctech-tinymce>
+    <ctech-tinymce id="myDecoratorTwo"></ctech-tinymce>
+</div>
+    </template>
+    <script>
+        Polymer({
+            is: 'ctech-tinymce-demo',
+            _externalSetContent: function() {
+                this.$.myDecorator.tinyMCEInstance.setContent("New Content!");
+            },
+            _externalSetContentTwo: function() {
+                this.$.myDecoratorTwo.tinyMCEInstance.setContent("New Content!");
+            }
+        });
+    </script>
+</dom-module>

@@ -1,0 +1,124 @@
+<link rel="import" href="../polymer/polymer.html">
+<script type="text/javascript" src="../tinymce/tinymce.min.js"></script>
+
+<dom-module id="ctech-tinymce">
+    <template>
+        <textarea id="internalTextArea"></textarea>
+    </template>
+</dom-module>
+<script>
+    Polymer({
+        is: 'ctech-tinymce',
+
+        /**
+         * @see tinymce config
+         */
+        properties: {
+            contentCss: {
+                type: String,
+                value: null
+            },
+            baseUrl: {
+                type: String,
+                value: null
+            },
+            plugins: {
+                type: String,
+                value: ''
+            },
+            menubar: {
+                type: String,
+                value: ''
+            },
+            toolbar: {
+                type: Array,
+                value: ['bold italic title']
+            },
+            tinyMCEId: {
+                type: String,
+                readonly: true
+            },
+            tinyMCEInstance: {
+                type: Object,
+                notify: true
+            }
+        },
+
+        /**
+         * Textarea where tinymce is instantiate
+         * @return {HTMLElement}
+         */
+        element: null,
+
+        /**
+         * DOMReady
+         */
+        ready: function() {
+            if (null !== this.baseUrl)
+                tinyMCE.baseURL = this.baseUrl;
+            
+            this.tinyMCEId = this._generateId();
+            this.element = this.$.internalTextArea;
+            this.$.internalTextArea.setAttribute("id", this.tinyMCEId);
+            this.async(function() {
+                this._initTinyMCE();
+            });
+        },
+        _generateId: function(nothing) {
+            var text = "";
+            var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+            for( var i=0; i < 8; i++ )
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+            return text;
+        },
+        /**
+         * Init tinyMCE
+         * @private
+         */
+        _initTinyMCE: function () {
+            var that = this;
+            var config = {
+                selector: '#' + this.tinyMCEId,
+                plugins: this.plugins,
+                menubar: this.menubar,
+                toolbar: this.toolbar,
+
+                setup: function(editor) {
+                    that.tinyMCEInstance = editor;
+                    editor.addButton('title', {
+                        title : 'Title',
+                        text: 'Title',
+                        image : false,
+                        onclick : function() {
+                            editor.execCommand('RemoveFormat', false, 'h3');
+                            editor.execCommand('FormatBlock', false, 'h3');
+                        }
+                    });
+
+                    editor.on('change', function(e) {
+                        that.element.value = editor.getContent();
+                    });
+
+                    editor.on('keyup', function(e) {
+                        that.element.value = editor.getContent();
+                    });
+                }
+            };
+
+            if (this.contentCss) {
+                config.content_css = this.contentCss;
+            }
+
+            tinymce.init(config);
+        },
+        getContent: function() {
+            return this.tinyMCEInstance.getContent();
+        },
+        setContent: function(newContent) {
+            this.tinyMCEInstance.setContent(newContent);
+        }
+
+    });
+</script>
