@@ -40,10 +40,10 @@
         Polymer({
             is: 'ctech-tinymce-demo',
             _externalSetContent: function() {
-                this.$.myDecorator.tinyMCEInstance.setContent("New Content!");
+                this.$.myDecorator.value = "New Content!";
             },
             _externalSetContentTwo: function() {
-                this.$.myDecoratorTwo.tinyMCEInstance.setContent("New Content!");
+                this.$.myDecoratorTwo.value = "New Content!";
             }
         });
     </script>

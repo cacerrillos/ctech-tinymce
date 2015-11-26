@@ -38,17 +38,16 @@
                 type: String,
                 readonly: true
             },
-            tinyMCEInstance: {
+            editor: {
                 type: Object,
                 notify: true
+            },
+            value: {
+                type: String,
+                notify: true,
+                observer: '_onValueChanged'
             }
         },
-
-        /**
-         * Textarea where tinymce is instantiate
-         * @return {HTMLElement}
-         */
-        element: null,
 
         /**
          * DOMReady
@@ -58,7 +57,6 @@
                 tinyMCE.baseURL = this.baseUrl;
             
             this.tinyMCEId = this._generateId();
-            this.element = this.$.internalTextArea;
             this.$.internalTextArea.setAttribute("id", this.tinyMCEId);
             this.async(function() {
                 this._initTinyMCE();
@@ -73,6 +71,11 @@
 
             return text;
         },
+        _onValueChanged: function(e) {
+            if(e != this.editor.getContent()) {
+                this.editor.setContent(e);
+            }
+        },
         /**
          * Init tinyMCE
          * @private
@@ -86,7 +89,7 @@
                 toolbar: this.toolbar,
 
                 setup: function(editor) {
-                    that.tinyMCEInstance = editor;
+                    that.editor = editor;
                     editor.addButton('title', {
                         title : 'Title',
                         text: 'Title',
@@ -98,11 +101,11 @@
                     });
 
                     editor.on('change', function(e) {
-                        that.element.value = editor.getContent();
+                        that.value = editor.getContent();
                     });
 
                     editor.on('keyup', function(e) {
-                        that.element.value = editor.getContent();
+                        that.value = editor.getContent();
                     });
                 }
             };
@@ -114,10 +117,10 @@
             tinymce.init(config);
         },
         getContent: function() {
-            return this.tinyMCEInstance.getContent();
+            return this.editor.getContent();
         },
         setContent: function(newContent) {
-            this.tinyMCEInstance.setContent(newContent);
+            this.editor.setContent(newContent);
         }
 
     });
